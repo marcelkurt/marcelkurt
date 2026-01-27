@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Creator Organizer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>Creator Hub</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-tab="dashboard">
+                    <span class="nav-icon">&#9633;</span>
+                    <span>Dashboard</span>
+                </li>
+                <li class="nav-item" data-tab="content">
+                    <span class="nav-icon">&#9998;</span>
+                    <span>Content Calendar</span>
+                </li>
+                <li class="nav-item" data-tab="meetings">
+                    <span class="nav-icon">&#128197;</span>
+                    <span>Meetings</span>
+                </li>
+                <li class="nav-item" data-tab="projects">
+                    <span class="nav-icon">&#128188;</span>
+                    <span>Projects</span>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary" id="exportBtn">Export Data</button>
+                <button class="btn btn-secondary" id="importBtn">Import Data</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;">
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <section class="tab-content active" id="dashboard-tab">
+                <header class="content-header">
+                    <h2>Dashboard</h2>
+                    <p class="date-display" id="currentDate"></p>
+                </header>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon content-icon">&#9998;</div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="totalContent">0</span>
+                            <span class="stat-label">Content Items</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon meeting-icon">&#128197;</div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="totalMeetings">0</span>
+                            <span class="stat-label">Meetings This Week</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon project-icon">&#128188;</div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="activeProjects">0</span>
+                            <span class="stat-label">Active Projects</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon deadline-icon">&#9888;</div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="upcomingDeadlines">0</span>
+                            <span class="stat-label">Upcoming Deadlines</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Upcoming Content</h3>
+                        <ul class="dashboard-list" id="upcomingContent"></ul>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Today's Meetings</h3>
+                        <ul class="dashboard-list" id="todayMeetings"></ul>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Project Progress</h3>
+                        <ul class="dashboard-list" id="projectProgress"></ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Content Calendar Tab -->
+            <section class="tab-content" id="content-tab">
+                <header class="content-header">
+                    <h2>Content Calendar</h2>
+                    <button class="btn btn-primary" id="addContentBtn">+ Add Content</button>
+                </header>
+
+                <div class="filters">
+                    <select id="contentPlatformFilter">
+                        <option value="all">All Platforms</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="blog">Blog</option>
+                        <option value="instagram">Instagram</option>
+                        <option value="twitter">Twitter/X</option>
+                        <option value="tiktok">TikTok</option>
+                        <option value="podcast">Podcast</option>
+                        <option value="newsletter">Newsletter</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <select id="contentStatusFilter">
+                        <option value="all">All Status</option>
+                        <option value="idea">Idea</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="review">Review</option>
+                        <option value="scheduled">Scheduled</option>
+                        <option value="published">Published</option>
+                    </select>
+                </div>
+
+                <div class="content-grid" id="contentGrid"></div>
+            </section>
+
+            <!-- Meetings Tab -->
+            <section class="tab-content" id="meetings-tab">
+                <header class="content-header">
+                    <h2>Meetings</h2>
+                    <button class="btn btn-primary" id="addMeetingBtn">+ Add Meeting</button>
+                </header>
+
+                <div class="filters">
+                    <select id="meetingTypeFilter">
+                        <option value="all">All Types</option>
+                        <option value="client">Client Call</option>
+                        <option value="team">Team Sync</option>
+                        <option value="interview">Interview</option>
+                        <option value="collab">Collaboration</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <input type="date" id="meetingDateFilter">
+                </div>
+
+                <div class="meetings-list" id="meetingsList"></div>
+            </section>
+
+            <!-- Projects Tab -->
+            <section class="tab-content" id="projects-tab">
+                <header class="content-header">
+                    <h2>Personal Projects</h2>
+                    <button class="btn btn-primary" id="addProjectBtn">+ Add Project</button>
+                </header>
+
+                <div class="filters">
+                    <select id="projectStatusFilter">
+                        <option value="all">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="on-hold">On Hold</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                    <select id="projectPriorityFilter">
+                        <option value="all">All Priorities</option>
+                        <option value="urgent">Urgent</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+
+                <div class="projects-grid" id="projectsGrid"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Content Modal -->
+    <div class="modal" id="contentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="contentModalTitle">Add Content</h3>
+                <button class="close-btn" data-modal="contentModal">&times;</button>
+            </div>
+            <form id="contentForm">
+                <input type="hidden" id="contentId">
+                <div class="form-group">
+                    <label for="contentTitle">Title *</label>
+                    <input type="text" id="contentTitle" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="contentPlatform">Platform *</label>
+                        <select id="contentPlatform" required>
+                            <option value="youtube">YouTube</option>
+                            <option value="blog">Blog</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="twitter">Twitter/X</option>
+                            <option value="tiktok">TikTok</option>
+                            <option value="podcast">Podcast</option>
+                            <option value="newsletter">Newsletter</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="contentStatus">Status *</label>
+                        <select id="contentStatus" required>
+                            <option value="idea">Idea</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="review">Review</option>
+                            <option value="scheduled">Scheduled</option>
+                            <option value="published">Published</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="contentDeadline">Deadline</label>
+                    <input type="date" id="contentDeadline">
+                </div>
+                <div class="form-group">
+                    <label for="contentDescription">Description</label>
+                    <textarea id="contentDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="contentNotes">Notes</label>
+                    <textarea id="contentNotes" rows="2"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-modal="contentModal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Meeting Modal -->
+    <div class="modal" id="meetingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="meetingModalTitle">Add Meeting</h3>
+                <button class="close-btn" data-modal="meetingModal">&times;</button>
+            </div>
+            <form id="meetingForm">
+                <input type="hidden" id="meetingId">
+                <div class="form-group">
+                    <label for="meetingTitle">Meeting Title *</label>
+                    <input type="text" id="meetingTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="meetingType">Type *</label>
+                    <select id="meetingType" required>
+                        <option value="client">Client Call</option>
+                        <option value="team">Team Sync</option>
+                        <option value="interview">Interview</option>
+                        <option value="collab">Collaboration</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="meetingDate">Date *</label>
+                        <input type="date" id="meetingDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="meetingTime">Time *</label>
+                        <input type="time" id="meetingTime" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="meetingDuration">Duration (minutes)</label>
+                    <input type="number" id="meetingDuration" min="15" step="15" value="30">
+                </div>
+                <div class="form-group">
+                    <label for="meetingLink">Meeting Link</label>
+                    <input type="url" id="meetingLink" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label for="meetingAttendees">Attendees</label>
+                    <input type="text" id="meetingAttendees" placeholder="Comma separated names">
+                </div>
+                <div class="form-group">
+                    <label for="meetingNotes">Notes</label>
+                    <textarea id="meetingNotes" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-modal="meetingModal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Project Modal -->
+    <div class="modal" id="projectModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 id="projectModalTitle">Add Project</h3>
+                <button class="close-btn" data-modal="projectModal">&times;</button>
+            </div>
+            <form id="projectForm">
+                <input type="hidden" id="projectId">
+                <div class="form-group">
+                    <label for="projectName">Project Name *</label>
+                    <input type="text" id="projectName" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="projectStatus">Status</label>
+                        <select id="projectStatus">
+                            <option value="active">Active</option>
+                            <option value="on-hold">On Hold</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectPriority">Priority</label>
+                        <select id="projectPriority">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="projectDeadline">Deadline</label>
+                    <input type="date" id="projectDeadline">
+                </div>
+                <div class="form-group">
+                    <label for="projectDescription">Description</label>
+                    <textarea id="projectDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Tasks</label>
+                    <div class="tasks-container" id="tasksContainer"></div>
+                    <button type="button" class="btn btn-secondary btn-sm" id="addTaskBtn">+ Add Task</button>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-modal="projectModal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3>Confirm Action</h3>
+                <button class="close-btn" data-modal="confirmModal">&times;</button>
+            </div>
+            <p id="confirmMessage">Are you sure you want to delete this item?</p>
+            <div class="form-actions">
+                <button class="btn btn-secondary" data-modal="confirmModal">Cancel</button>
+                <button class="btn btn-danger" id="confirmBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
